@@ -12,7 +12,12 @@ namespace LibBundle.Records
         public int BundleIndex;
         public int Offset;
         public int Size;
-
+        
+        // 新增：給 MissingFileRecord 使用
+        public FileRecord()
+        {
+        }
+        
         public FileRecord(BinaryReader br)
         {
             NameHash = br.ReadUInt64();
