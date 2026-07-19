@@ -84,7 +84,17 @@ namespace LibBundle
                         else
                         {
                             Paths.Add(str);
-                            var f = FindFiles[FNV1a64Hash(str)];
+                        
+                            var hash = FNV1a64Hash(str);
+                        
+                            if (!FindFiles.TryGetValue(hash, out var f))
+                            {
+                                System.Console.WriteLine(
+                                    $"Missing FileRecord: {str} Hash={hash}"
+                                );
+                                continue;
+                            }
+                        
                             f.path = str;
                             d.children.Add(f);
                             f.parent = d;
