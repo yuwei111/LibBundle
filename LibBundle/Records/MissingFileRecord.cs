@@ -6,7 +6,7 @@ namespace LibBundle.Records
     public class MissingFileRecord : FileRecord
     {
         public MissingFileRecord(string path, ulong hash)
-            : base(new BinaryReader(new MemoryStream()))
+            : base()
         {
             this.path = path;
             NameHash = hash;
