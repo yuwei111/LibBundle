@@ -89,7 +89,12 @@ namespace LibBundle
                         
                             if (!FindFiles.TryGetValue(hash, out var f))
                             {
+                                System.Console.WriteLine(
+                                    $"Create MissingFileRecord: {str} Hash={hash}"
+                                );
+                            
                                 f = new MissingFileRecord(str, hash);
+                            
                                 FindFiles[hash] = f;
                             }
                         
