@@ -3,10 +3,10 @@ using System.IO;
 
 namespace LibBundle.Records
 {
-    public class MissingFileRecord  FileRecord
+    public class MissingFileRecord : FileRecord
     {
         public MissingFileRecord(string path, ulong hash)
-             base(new BinaryReader(new MemoryStream()))
+            : base(new BinaryReader(new MemoryStream()))
         {
             this.path = path;
             NameHash = hash;
@@ -23,7 +23,7 @@ namespace LibBundle.Records
         public override byte[] Read(Stream stream = null)
         {
             throw new FileNotFoundException(
-                $Missing file record {path}
+                $"Missing file record: {path}"
             );
         }
 
@@ -31,7 +31,7 @@ namespace LibBundle.Records
         public override void Write(byte[] data)
         {
             throw new InvalidOperationException(
-                $Cannot write missing file {path}
+                $"Cannot write missing file: {path}"
             );
         }
 
@@ -39,7 +39,7 @@ namespace LibBundle.Records
         public override void Move(BundleRecord target)
         {
             throw new InvalidOperationException(
-                $Cannot move missing file {path}
+                $"Cannot move missing file: {path}"
             );
         }
     }
