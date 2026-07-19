@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build VisualBundle Windows EXE
 
 on:
   workflow_dispatch:
@@ -14,22 +14,27 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
+
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./VisualBundle/VisualBundle.csproj
+
 
     - name: Build solution
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./VisualBundle/VisualBundle.csproj --configuration Release --no-restore
+
 
     - name: Publish self-contained EXE
-      run: dotnet publish ./PoeSmoother/PoeSmoother.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+      run: dotnet publish ./VisualBundle/VisualBundle.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
 
-    - name: Upload EXE artifact
+
+    - name: Upload VisualBundle artifact
       uses: actions/upload-artifact@v4
       with:
-        name: POEtool
+        name: VisualBundle
         path: publish/*
