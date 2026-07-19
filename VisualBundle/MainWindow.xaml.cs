@@ -201,25 +201,45 @@ namespace VisualBundle
                 BOffsetView.Text = fr.Offset.ToString();
                 IOffsetView.Text = "";
                 fSizeView.Text = fr.Size.ToString();
+            
                 ButtonExport.IsEnabled = true;
-                ButtonReplace.IsEnabled = true;
-                ButtonOpen.IsEnabled = true;
+            
+            
+                if (fr is MissingFileRecord)
+                {
+                    ButtonReplace.IsEnabled = false;
+                    ButtonOpen.IsEnabled = false;
+                }
+                else
+                {
+                    ButtonReplace.IsEnabled = true;
+                    ButtonOpen.IsEnabled = true;
+                }
             }
         }
 
         public void BuildTree(ItemModel root, string path, object file)
         {
+            if (string.IsNullOrEmpty(path))
+                return;
+        
+        
             if (file is BundleRecord record)
             {
                 foreach (var f in record.Files)
-                    if (f.path.ToLower().Contains(filtered))
+                {
+                    if (!string.IsNullOrEmpty(f.path) &&
+                        f.path.ToLower().Contains(filtered))
                     {
                         loadedBundles.Add(record);
                         goto S;
                     }
+                }
+        
                 return;
             }
-            else if (!path.ToLower().Contains(filtered)) return;
+            else if (!path.ToLower().Contains(filtered))
+                return;
          S:
             var SplittedPath = path.Split('/');
             ItemModel parent = root;
@@ -231,7 +251,12 @@ namespace VisualBundle
                 if (next is null)
                 { //No exist node, Build a new node
                     if (isFile)
-                        next = new FileModel(name) { Record = file };
+                    {
+                        next = new FileModel(name)
+                        {
+                            Record = file
+                        };
+                    }
                     else
                         next = new FolderModel(name);
                     parent.AddChildItem(next);
@@ -243,8 +268,13 @@ namespace VisualBundle
         public void BuildNotExistTree(ItemModel root, string path, object file)
         {
             foreach (var f in ((BundleRecord)file).Files)
-                if (f.path.ToLower().Contains(filtered))
+            {
+                if (!string.IsNullOrEmpty(f.path) &&
+                    f.path.ToLower().Contains(filtered))
+                {
                     goto S;
+                }
+            }
             return;
           S:
             var SplittedPath = path.Split('/');
@@ -371,11 +401,16 @@ namespace VisualBundle
                     Directory.CreateDirectory(path + "\\" + fi.Name);
                     count += ExportDir(fi.ChildItems, path + "\\" + fi.Name, stream);
                 }
-                else // is file
+            else // is file
+            {
+                if (fr is MissingFileRecord)
                 {
-                    File.WriteAllBytes(path + "\\" + fi.Name, fr.Read(stream));
-                    count++;
+                    continue;
                 }
+            
+                File.WriteAllBytes(path + "\\" + fi.Name, fr.Read(stream));
+                count++;
+            }
             }
             return count;
         }
